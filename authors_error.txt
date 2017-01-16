@@ -1,0 +1,3 @@
+['\xc3\x96zalp Babaoglu', 'Alan Albert Bertossi', 'Alessandro Bevilacqua', 'Davide Bresolin', 'Ugo Lago', 'Gabriele Angelo', 'Marco Felice', 'Angelo Iorio', 'Pietro Lena', 'Luigi Stefano', 'Eugenio Faldella', 'Fabio Grandi', 'Zeynep Kiziltan', 'Diego Lanzi', 'Luciano Margara', 'Stefano Mattoccia', 'Antonio Messina', 'Edoardo Mollona', 'Aldopaolo Palareti', 'Marco Ruffino', 'Claudio Coen', 'Tullio Cinotti', 'Emilio Tomasini', 'Federico Tombari']
+
+
