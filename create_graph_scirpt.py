@@ -2,6 +2,34 @@
 
 import networkx as nx
 import matplotlib.pyplot as plt
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly
+import operator
+
+def print_chart(x_data, y_data, title):
+    plotly.tools.set_credentials_file(username='riccardocandido', api_key='0k8sicv8yj')
+
+    # Create and style traces
+    trace0 = go.Scatter(
+        x=x_data,
+        y=y_data,
+        name='A',
+        line=dict(
+            color='rgb(205, 12, 24)',
+            width=4)
+    )
+
+    data = [trace0]
+
+    # Edit the layout
+    layout = dict(title=title,
+                  xaxis=dict(title='Number of Collaborations', type='log'),
+                  yaxis=dict(title='Counter', type='log'))
+
+    py.plot(data, filename='extend plot', fileopt='extend')
+
+
 
 G=nx.Graph()
 nodes_list = [
@@ -1760,7 +1788,7 @@ professors_core_set = [
     'Paolo Ciancarini',
     'Antonio Corradi',
     'Ugo Dal Lago',
-    'Gabriele Angelo',
+    'Gabriele D&apos;Angelo',
     'Renzo Davoli',
     'Enrico Denti',
     'Marco Di Felice',
@@ -1786,21 +1814,16 @@ professors_core_set = [
     'Dario Maio',
     'Davide Maltoni',
     'Vittorio Maniezzo',
-    'Luciano Margara',
     'Simone Martini',
     'Moreno Marzolla',
-    'Stefano Mattoccia',
     'Paola Mello',
-    'Antonio Messina',
     'Michela Milano',
     'Silvia Mirri',
-    'Edoardo Mollona',
     'Rebecca Montanari',
     'Danilo Montesi',
     'Gianluca Moro',
     'Antonio Natali',
     'Andrea Omicini',
-    'Aldopaolo Palareti',
     'Fabio Panzieri',
     'Marco Patella',
     'Wilma Penzo',
@@ -1812,30 +1835,89 @@ professors_core_set = [
     'Andrea Roli',
     'Davide Rossi',
     'Giovanni Rossi',
-    'Marco Ruffino',
-    'Claudio Coen',
-    'Tullio Cinotti',
+    'Claudio Sacerdoti Coen',
+    'Tullio Salmon Cinotti',
     'Paola Salomoni',
     'Davide Sangiorgi',
     'Claudio Sartori',
-    'Emilio Tomasini',
-    'Federico Tombari',
     'Paolo Torroni',
     'Mirko Viroli',
     'Fabio Vitali',
     'Gianluigi Zavattaro'
 ]
 
-i = 0
-author_missing = []
+#define all the ego networks
+hub_ego = {}
 for author in professors_core_set:
-    if author in nodes_list:
-        i += 1
-    else:
-        author_missing.append(author)
+    hub_ego[author] = nx.ego_graph(G, author)
 
-print('professors_core_set author number' + str(len(professors_core_set)))
-print('in core set ' + str(i))
-import pdb; pdb.set_trace()
+# matrix init
+size_core_set = len(professors_core_set)
+matrix = []
+matrix_diff = []
+for item in range(size_core_set):
+    matrix.append([-1]*size_core_set)
+    matrix_diff.append([-1]*size_core_set)
+
+for key, list in hub_ego.iteritems():
+    ego_network_key = hub_ego[key]
+    for item in list.nodes():
+        if hub_ego.get(item):
+            ego_network_item = hub_ego[item]
+            diff = len(set(ego_network_key.nodes()) ^ set(ego_network_item.nodes()))
+            diff_diff = len(set(ego_network_key.nodes()) - set(ego_network_item.nodes()))
+           
+            index_key = professors_core_set.index(key)
+            index_item = professors_core_set.index(item)
+            
+            matrix[index_item][index_key] = float(diff) / len(ego_network_key.nodes())
+            matrix_diff[index_item][index_key] = float(diff_diff) / len(ego_network_key.nodes())
+            
+frequency_distribution = {}
+for row in matrix:
+    for j in row:
+        if frequency_distribution.get(j):
+            frequency_distribution[j]+= 1
+        else:
+            frequency_distribution[j] = 1
+
+frequency_distribution_diff = {}
+for row in matrix_diff:
+    for j in row:
+        if frequency_distribution_diff.get(j):
+            frequency_distribution_diff[j]+= 1
+        else:
+            frequency_distribution_diff[j] = 1
+
+
+if frequency_distribution[0.0] != 72 or frequency_distribution_diff[0.0] != 72:
+    print("Error with the Frequency Distribution")
+
+del frequency_distribution[0.0]
+del frequency_distribution[-1]
+del frequency_distribution_diff[0.0]
+del frequency_distribution_diff[-1]
+
+sorted_freq_dist = sorted(frequency_distribution.items(), key=operator.itemgetter(0))
+sorted_freq_dist_diff = sorted(frequency_distribution_diff.items(), key=operator.itemgetter(0))
+
+keys=[]
+values=[]
+for item in sorted_freq_dist:
+    keys.append(item[0])
+    values.append(item[1])
+
+import ipdb; ipdb.set_trace()
+
+print_chart(keys, values, 'first matrix')
+
+keys=[]
+values=[]
+for item in sorted_freq_dist_diff:
+    keys.append(item[0])
+    values.append(item[1])
+
+print_chart(keys, values, 'second matrix')
+
 
 
