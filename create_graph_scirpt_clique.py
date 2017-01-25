@@ -1848,8 +1848,20 @@ professors_core_set = [
 ]
 
 #define all the ego networks
-import ipdb; ipdb.set_trace()
-author_clique = {}
+author_clique = []
 for author in professors_core_set:
-    author_clique[author] = nx.cliques_containing_node(G, author)
+    common_list = nx.cliques_containing_node(G, author)
+    for item in common_list:
+         author_clique.append(item)
+
+import ipdb; ipdb.set_trace()
+clique_matrix = []
+for item in author_clique:
+    clique_matrix.append([-1]*len(author_clique))
+
+import ipdb; ipdb.set_trace()
+for list in author_clique:
+    for compare_list in author_clique:
+        clique_matrix[author_clique.index(list)][author_clique.index(compare_list)] = len(set(list) ^ set(compare_list))
     
+import ipdb; ipdb.set_trace()
